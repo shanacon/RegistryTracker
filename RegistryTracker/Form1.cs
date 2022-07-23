@@ -20,17 +20,24 @@ namespace RegistryTracker
 
         private void button1_Click(object sender, EventArgs e)
         {
-            PrintKeys("SOFTWARE\\7-Zip");
+            Global.Before = new NodeTree("7-Zip", "SOFTWARE\\7-Zip");
+            Global.Before.Construct();
+            //Global.Before.BFS();
             mylabel.Text = "Tracking";
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Global.After = new NodeTree("7-Zip", "SOFTWARE\\7-Zip");
+            Global.After.Construct();
+            //Global.After.BFS();
+            mylabel.Text = Global.After.CheckSame(Global.Before, Global.After) + "";
         }
         static void PrintKeys(string rkey)
         {
             //Queue<string> queue = new Queue<string>();
             //queue.Enqueue(rkey);
             //BFSTraversal(ref queue);
-            NodeTree root = new NodeTree(rkey.Split('\\')[1], rkey);
-            root.Construct();
-            root.DFS();
+            
         }
         static void BFSTraversal(ref Queue<string> queue)
         {

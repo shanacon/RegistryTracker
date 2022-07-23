@@ -20,7 +20,12 @@ namespace RegistryTracker
             Application.Run(new Form1());
         }
     }
-    class NodeTree
+    public static class Global
+    {
+        public static NodeTree Before;
+        public static NodeTree After;
+    }
+    public class NodeTree
     {
         private string name;
         private string path;
@@ -99,6 +104,20 @@ namespace RegistryTracker
             foreach (NodeTree kid in child)
             {
                 kid.DFS();
+            }
+        }
+        public bool CheckSame(NodeTree tree1, NodeTree tree2)
+        {
+            if (tree1.getChild().Count == 0 && tree2.getChild().Count == 0)
+                return tree1.getPath() == tree2.getPath() ? true : false;
+            else if (tree1.getChild().Count != tree2.getChild().Count)
+                return false;
+            else
+            {
+                bool ret = true;
+                for (int i = 0;i < tree1.getChild().Count; i++)
+                    ret &= CheckSame(tree1.getChild().ElementAt(i), tree2.getChild().ElementAt(i));
+                return ret;
             }
         }
     }
