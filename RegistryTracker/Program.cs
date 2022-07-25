@@ -24,6 +24,57 @@ namespace RegistryTracker
     {
         public static NodeTree Before;
         public static NodeTree After;
+        public static bool CheckSame(NodeTree tree1, NodeTree tree2)
+        {
+            if (tree1.getChild().Count == 0 && tree2.getChild().Count == 0)
+                return tree1.getPath() == tree2.getPath() ? true : false;
+            else if (tree1.getChild().Count != tree2.getChild().Count)
+                return false;
+            else
+            {
+                bool ret = true;
+                for (int i = 0; i < tree1.getChild().Count; i++)
+                    ret &= CheckSame(tree1.getChild().ElementAt(i), tree2.getChild().ElementAt(i));
+                return ret;
+            }
+        }
+        public static List<DiffStruct> CheckNodeDiff(NodeTree tree1, NodeTree tree2)
+        {
+            List<DiffStruct> ret = new List<DiffStruct>();
+            Dictionary<string, NodeTree> DicTree1ToNode = new Dictionary<string, NodeTree>();
+            Dictionary<string, NodeTree> DicTree2ToNode = new Dictionary<string, NodeTree>();
+            ///
+            foreach (NodeTree kid in tree1.getChild())
+                DicTree1ToNode[kid.getPath()] = kid;
+            foreach (NodeTree kid in tree2.getChild())
+                DicTree2ToNode[kid.getPath()] = kid;
+            foreach (KeyValuePair<string, NodeTree> entry in DicTree1ToNode)
+            {
+                if (!DicTree2ToNode.ContainsKey(entry.Key))
+                    ret.Add(new DiffStruct(DicTree1ToNode[entry.Key], false));
+                else
+                {
+                    List<DiffStruct> tmp = CheckNodeDiff(entry.Value, DicTree2ToNode[entry.Key]);
+                    ret.AddRange(tmp);
+                }
+            }
+            foreach (KeyValuePair<string, NodeTree> entry in DicTree2ToNode)
+            {
+                if (!DicTree1ToNode.ContainsKey(entry.Key))
+                    ret.Add(new DiffStruct(DicTree2ToNode[entry.Key], true));
+            }
+            return ret;
+        }
+    }
+    public struct DiffStruct
+    {
+        public NodeTree nodetree;
+        public bool After;
+        public DiffStruct(NodeTree nodetree, bool After)
+        {
+            this.nodetree = nodetree;
+            this.After = After;
+        }
     }
     public class NodeTree
     {
@@ -104,20 +155,6 @@ namespace RegistryTracker
             foreach (NodeTree kid in child)
             {
                 kid.DFS();
-            }
-        }
-        public bool CheckSame(NodeTree tree1, NodeTree tree2)
-        {
-            if (tree1.getChild().Count == 0 && tree2.getChild().Count == 0)
-                return tree1.getPath() == tree2.getPath() ? true : false;
-            else if (tree1.getChild().Count != tree2.getChild().Count)
-                return false;
-            else
-            {
-                bool ret = true;
-                for (int i = 0;i < tree1.getChild().Count; i++)
-                    ret &= CheckSame(tree1.getChild().ElementAt(i), tree2.getChild().ElementAt(i));
-                return ret;
             }
         }
     }

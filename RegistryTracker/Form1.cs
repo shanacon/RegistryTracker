@@ -30,7 +30,14 @@ namespace RegistryTracker
             Global.After = new NodeTree("7-Zip", "SOFTWARE\\7-Zip");
             Global.After.Construct();
             //Global.After.BFS();
-            mylabel.Text = Global.After.CheckSame(Global.Before, Global.After) + "";
+            mylabel.Text = Global.CheckSame(Global.Before, Global.After) + "";
+            foreach (DiffStruct diff in Global.CheckNodeDiff(Global.Before, Global.After))
+            {
+                if (diff.After)
+                    MessageBox.Show("After多的: " + diff.nodetree.getPath());
+                else
+                    MessageBox.Show("Before多的: " + diff.nodetree.getPath());
+            }
         }
         static void PrintKeys(string rkey)
         {
