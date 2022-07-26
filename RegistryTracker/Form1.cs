@@ -16,6 +16,11 @@ namespace RegistryTracker
         public Form1()
         {
             InitializeComponent();
+            RootPathChoose.Items.Add("\\HKEY_CLASSES_ROOT");
+            RootPathChoose.Items.Add("\\HKEY_CURRENT_USER");
+            RootPathChoose.Items.Add("\\HKEY_LOCAL_MACHINE");
+            RootPathChoose.Items.Add("\\HKEY_USERS");
+            RootPathChoose.Items.Add("\\HKEY_CURRENT_CONFIG");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -58,6 +63,52 @@ namespace RegistryTracker
                 {
                     queue.Enqueue(Node + "\\" + s);
                 }
+            }
+        }
+
+        private void AddPathBtn_Click(object sender, EventArgs e)
+        {
+            if(RootPathChoose.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select root path.");
+                return;
+            }
+            string tmp = (PathBox.Text[0] != '\\' ? "\\" : "") + PathBox.Text;
+            TrackedPathBox.Items.Add(RootPathChoose.Text + tmp);
+        }
+
+        private void DeletePathBtn_Click(object sender, EventArgs e)
+        {
+            bool continueflag = true;
+            while(continueflag)
+            {
+                continueflag = false;
+                for (int i = 0; i < TrackedPathBox.Items.Count; i++)
+                {
+                    if (TrackedPathBox.GetItemChecked(i))
+                    {
+                        continueflag = true;
+                        TrackedPathBox.Items.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+            
+        }
+
+        private void SelectAllBtn_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < TrackedPathBox.Items.Count; i++)
+                TrackedPathBox.SetItemChecked(i, true);
+        }
+
+        private void PathBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                AddPathBtn_Click(this, new EventArgs());
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
         }
     }
