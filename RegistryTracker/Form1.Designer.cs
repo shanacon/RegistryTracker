@@ -37,6 +37,7 @@
             this.PathBox = new System.Windows.Forms.TextBox();
             this.DeletePathBtn = new System.Windows.Forms.Button();
             this.SelectAllBtn = new System.Windows.Forms.Button();
+            this.StartTrackBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -132,11 +133,23 @@
             this.SelectAllBtn.UseVisualStyleBackColor = true;
             this.SelectAllBtn.Click += new System.EventHandler(this.SelectAllBtn_Click);
             // 
+            // StartTrackBtn
+            // 
+            this.StartTrackBtn.Font = new System.Drawing.Font("微軟正黑體", 15F);
+            this.StartTrackBtn.Location = new System.Drawing.Point(600, 217);
+            this.StartTrackBtn.Name = "StartTrackBtn";
+            this.StartTrackBtn.Size = new System.Drawing.Size(147, 34);
+            this.StartTrackBtn.TabIndex = 9;
+            this.StartTrackBtn.Text = "Start Track";
+            this.StartTrackBtn.UseVisualStyleBackColor = true;
+            this.StartTrackBtn.Click += new System.EventHandler(this.StartTrackBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.StartTrackBtn);
             this.Controls.Add(this.SelectAllBtn);
             this.Controls.Add(this.DeletePathBtn);
             this.Controls.Add(this.PathBox);
@@ -164,6 +177,7 @@
         private System.Windows.Forms.TextBox PathBox;
         private System.Windows.Forms.Button DeletePathBtn;
         private System.Windows.Forms.Button SelectAllBtn;
+        private System.Windows.Forms.Button StartTrackBtn;
     }
 }
 

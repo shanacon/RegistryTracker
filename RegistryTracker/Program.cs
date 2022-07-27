@@ -24,7 +24,8 @@ namespace RegistryTracker
     {
         public static NodeTree Before;
         public static NodeTree After;
-        public static bool CheckSame(NodeTree tree1, NodeTree tree2)
+        public static List<NodeTree> TrackList = new List<NodeTree>();
+       public static bool CheckSame(NodeTree tree1, NodeTree tree2)
         {
             if (tree1.getChild().Count == 0 && tree2.getChild().Count == 0)
                 return tree1.getPath() == tree2.getPath() ? true : false;

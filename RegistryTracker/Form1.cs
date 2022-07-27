@@ -65,21 +65,47 @@ namespace RegistryTracker
                 }
             }
         }
-
         private void AddPathBtn_Click(object sender, EventArgs e)
         {
-            if(RootPathChoose.SelectedIndex == -1)
+            RegistryKey rk = null;
+            if (RootPathChoose.SelectedIndex == -1)
             {
                 MessageBox.Show("Please select root path.");
                 return;
             }
-            string tmp = (PathBox.Text[0] != '\\' ? "\\" : "") + PathBox.Text;
-            TrackedPathBox.Items.Add(RootPathChoose.Text + tmp);
+            string tmp = (PathBox.Text.Length != 0 && PathBox.Text[0] == '\\' ? PathBox.Text.Remove(0,1) : PathBox.Text);
+            if (RootPathChoose.SelectedIndex == 0)
+            {
+                rk = Registry.ClassesRoot.OpenSubKey(tmp);
+            }
+            else if (RootPathChoose.SelectedIndex == 1)
+            {
+                rk = Registry.CurrentUser.OpenSubKey(tmp);
+            }
+            else if (RootPathChoose.SelectedIndex == 2)
+            {
+                rk = Registry.LocalMachine.OpenSubKey(tmp);
+            }
+            else if (RootPathChoose.SelectedIndex == 3)
+            {
+                rk = Registry.Users.OpenSubKey(tmp);
+            }
+            else if (RootPathChoose.SelectedIndex == 4)
+            {
+                rk = Registry.CurrentConfig.OpenSubKey(tmp);
+            }
+            if(rk == null)
+            {
+                MessageBox.Show("Path does not exist.");
+                return;
+            }
+            Global.TrackList.Add(new NodeTree(tmp.Split('\\').Last(), tmp));
+            TrackedPathBox.Items.Add(RootPathChoose.Text + "\\" + tmp);
         }
-
         private void DeletePathBtn_Click(object sender, EventArgs e)
         {
             bool continueflag = true;
+            int count = 0;
             while(continueflag)
             {
                 continueflag = false;
@@ -88,10 +114,14 @@ namespace RegistryTracker
                     if (TrackedPathBox.GetItemChecked(i))
                     {
                         continueflag = true;
+                        Global.TrackList.RemoveAt(i);
                         TrackedPathBox.Items.RemoveAt(i);
                         break;
                     }
+                    if(count == 0 && i == TrackedPathBox.Items.Count - 1)
+                        MessageBox.Show("Please select path to delete.");
                 }
+                count++;
             }
             
         }
@@ -110,6 +140,12 @@ namespace RegistryTracker
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
+        }
+        private void StartTrackBtn_Click(object sender, EventArgs e)
+        {
+            foreach (NodeTree node in Global.TrackList)
+                node.Construct();
+            mylabel.Text = "Tracking";
         }
     }
 }
