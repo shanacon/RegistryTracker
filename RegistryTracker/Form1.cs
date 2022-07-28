@@ -25,14 +25,14 @@ namespace RegistryTracker
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Global.Before = new NodeTree("7-Zip", "SOFTWARE\\7-Zip");
+            /*Global.Before = new NodeTree("7-Zip", "SOFTWARE\\7-Zip");
             Global.Before.Construct();
             //Global.Before.BFS();
-            mylabel.Text = "Tracking";
+            mylabel.Text = "Tracking";*/
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            Global.After = new NodeTree("7-Zip", "SOFTWARE\\7-Zip");
+            /*Global.After = new NodeTree("7-Zip", "SOFTWARE\\7-Zip");
             Global.After.Construct();
             //Global.After.BFS();
             mylabel.Text = Global.CheckSame(Global.Before, Global.After) + "";
@@ -42,7 +42,7 @@ namespace RegistryTracker
                     MessageBox.Show("After多的: " + diff.nodetree.getPath());
                 else
                     MessageBox.Show("Before多的: " + diff.nodetree.getPath());
-            }
+            }*/
         }
         static void PrintKeys(string rkey)
         {
@@ -50,20 +50,6 @@ namespace RegistryTracker
             //queue.Enqueue(rkey);
             //BFSTraversal(ref queue);
             
-        }
-        static void BFSTraversal(ref Queue<string> queue)
-        {
-            while (queue.Count != 0)
-            {
-                string Node = queue.Dequeue();
-                MessageBox.Show(Node);
-                RegistryKey rk = Registry.CurrentUser.OpenSubKey(Node); ;
-                string[] names = rk.GetSubKeyNames();
-                foreach (string s in names)
-                {
-                    queue.Enqueue(Node + "\\" + s);
-                }
-            }
         }
         private void AddPathBtn_Click(object sender, EventArgs e)
         {
@@ -74,32 +60,24 @@ namespace RegistryTracker
                 return;
             }
             string tmp = (PathBox.Text.Length != 0 && PathBox.Text[0] == '\\' ? PathBox.Text.Remove(0,1) : PathBox.Text);
+
             if (RootPathChoose.SelectedIndex == 0)
-            {
                 rk = Registry.ClassesRoot.OpenSubKey(tmp);
-            }
             else if (RootPathChoose.SelectedIndex == 1)
-            {
                 rk = Registry.CurrentUser.OpenSubKey(tmp);
-            }
             else if (RootPathChoose.SelectedIndex == 2)
-            {
                 rk = Registry.LocalMachine.OpenSubKey(tmp);
-            }
             else if (RootPathChoose.SelectedIndex == 3)
-            {
                 rk = Registry.Users.OpenSubKey(tmp);
-            }
             else if (RootPathChoose.SelectedIndex == 4)
-            {
                 rk = Registry.CurrentConfig.OpenSubKey(tmp);
-            }
+
             if(rk == null)
             {
                 MessageBox.Show("Path does not exist.");
                 return;
             }
-            Global.TrackList.Add(new NodeTree(tmp.Split('\\').Last(), tmp));
+            Global.TrackList.Add(new NodeTree(tmp.Split('\\').Last(), tmp, RootPathChoose.SelectedIndex));
             TrackedPathBox.Items.Add(RootPathChoose.Text + "\\" + tmp);
         }
         private void DeletePathBtn_Click(object sender, EventArgs e)
@@ -146,6 +124,22 @@ namespace RegistryTracker
             foreach (NodeTree node in Global.TrackList)
                 node.Construct();
             mylabel.Text = "Tracking";
+        }
+
+        private void StopTrackBtn_Click(object sender, EventArgs e)
+        {
+            mylabel.Text = "Stoping";
+            foreach (NodeTree node in Global.TrackList)
+                Global.TrackListAfter.Add(new NodeTree(node.getName(), node.getPath(), node.getRoot()));
+            foreach (NodeTree node in Global.TrackListAfter)
+                node.Construct();
+            mylabel.Text = "Making result";
+            for(int i = 0; i < Global.TrackList.Count; i++)
+            {
+                Global.DiffList.AddRange(Global.CheckNodeDiff(Global.TrackList[i], Global.TrackListAfter[i]));
+            }
+            foreach (DiffStruct diff in Global.DiffList)
+                MessageBox.Show(diff.nodetree.getPath());
         }
     }
 }

@@ -24,8 +24,10 @@ namespace RegistryTracker
     {
         public static NodeTree Before;
         public static NodeTree After;
-        public static List<NodeTree> TrackList = new List<NodeTree>();
-       public static bool CheckSame(NodeTree tree1, NodeTree tree2)
+        public static List<NodeTree> TrackList = new List<NodeTree> ();
+        public static List<NodeTree> TrackListAfter = new List<NodeTree> ();
+        public static List<DiffStruct> DiffList = new List<DiffStruct> ();
+        public static bool CheckSame(NodeTree tree1, NodeTree tree2)
         {
             if (tree1.getChild().Count == 0 && tree2.getChild().Count == 0)
                 return tree1.getPath() == tree2.getPath() ? true : false;
@@ -81,11 +83,14 @@ namespace RegistryTracker
     {
         private string name;
         private string path;
+        private enum ROOT { HKEY_CLASSES_ROOT, HKEY_CURRENT_USER , HKEY_LOCAL_MACHINE , HKEY_USERS , HKEY_CURRENT_CONFIG }
+        private ROOT root;
         private LinkedList<NodeTree> child;
-        public NodeTree(string name, string path)
+        public NodeTree(string name, string path, int root)
         {
             this.name = name;
             this.path = path;
+            this.root = (ROOT)root;
             child = new LinkedList<NodeTree>();
         }
         public string getName()
@@ -95,6 +100,10 @@ namespace RegistryTracker
         public string getPath()
         {
             return path;
+        }
+        public int getRoot()
+        {
+            return (int)this.root;
         }
         public LinkedList<NodeTree> getChild()
         {
@@ -114,11 +123,27 @@ namespace RegistryTracker
         }
         public void Construct()
         {
-            RegistryKey rk = Registry.CurrentUser.OpenSubKey(path);
+            RegistryKey rk = null;
+            //MessageBox.Show(root.ToString());
+            if (root == ROOT.HKEY_CLASSES_ROOT)
+                rk = path == "" ? Registry.ClassesRoot : Registry.ClassesRoot.OpenSubKey(path);
+            else if (root == ROOT.HKEY_CURRENT_USER)
+                rk = path == "" ? Registry.CurrentUser : Registry.CurrentUser.OpenSubKey(path);
+            else if (root == ROOT.HKEY_LOCAL_MACHINE)
+                rk = path == "" ? Registry.LocalMachine : Registry.LocalMachine.OpenSubKey(path);
+            else if (root == ROOT.HKEY_USERS)
+                rk = path == "" ? Registry.Users : Registry.Users.OpenSubKey(path);
+            else if (root == ROOT.HKEY_CURRENT_CONFIG)
+                rk = path == "" ? Registry.CurrentConfig : Registry.CurrentConfig.OpenSubKey(path);
+            if (rk == null)
+            {
+                MessageBox.Show("Error in Construct.");
+                Environment.Exit(0);
+            }
             string[] names = rk.GetSubKeyNames();
             foreach (string s in names)
             {
-                child.AddLast(new NodeTree(s, path + "\\" + s));
+                child.AddLast(new NodeTree(s, path == "" ? s : path + "\\" + s, (int)root));
             }
             foreach (NodeTree kid in child)
             {

@@ -38,12 +38,14 @@
             this.DeletePathBtn = new System.Windows.Forms.Button();
             this.SelectAllBtn = new System.Windows.Forms.Button();
             this.StartTrackBtn = new System.Windows.Forms.Button();
+            this.StopTrackBtn = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("新細明體", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.button1.Location = new System.Drawing.Point(600, 275);
+            this.button1.Location = new System.Drawing.Point(505, 340);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(147, 42);
             this.button1.TabIndex = 0;
@@ -54,7 +56,7 @@
             // mylabel
             // 
             this.mylabel.AutoSize = true;
-            this.mylabel.Location = new System.Drawing.Point(598, 394);
+            this.mylabel.Location = new System.Drawing.Point(691, 226);
             this.mylabel.Name = "mylabel";
             this.mylabel.Size = new System.Drawing.Size(33, 12);
             this.mylabel.TabIndex = 1;
@@ -63,7 +65,7 @@
             // button2
             // 
             this.button2.Font = new System.Drawing.Font("新細明體", 20F);
-            this.button2.Location = new System.Drawing.Point(600, 332);
+            this.button2.Location = new System.Drawing.Point(505, 396);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(147, 42);
             this.button2.TabIndex = 2;
@@ -136,7 +138,7 @@
             // StartTrackBtn
             // 
             this.StartTrackBtn.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.StartTrackBtn.Location = new System.Drawing.Point(600, 217);
+            this.StartTrackBtn.Location = new System.Drawing.Point(505, 204);
             this.StartTrackBtn.Name = "StartTrackBtn";
             this.StartTrackBtn.Size = new System.Drawing.Size(147, 34);
             this.StartTrackBtn.TabIndex = 9;
@@ -144,11 +146,34 @@
             this.StartTrackBtn.UseVisualStyleBackColor = true;
             this.StartTrackBtn.Click += new System.EventHandler(this.StartTrackBtn_Click);
             // 
+            // StopTrackBtn
+            // 
+            this.StopTrackBtn.Font = new System.Drawing.Font("微軟正黑體", 15F);
+            this.StopTrackBtn.Location = new System.Drawing.Point(505, 244);
+            this.StopTrackBtn.Name = "StopTrackBtn";
+            this.StopTrackBtn.Size = new System.Drawing.Size(147, 34);
+            this.StopTrackBtn.TabIndex = 10;
+            this.StopTrackBtn.Text = "Stop track";
+            this.StopTrackBtn.UseVisualStyleBackColor = true;
+            this.StopTrackBtn.Click += new System.EventHandler(this.StopTrackBtn_Click);
+            // 
+            // button4
+            // 
+            this.button4.Font = new System.Drawing.Font("微軟正黑體", 15F);
+            this.button4.Location = new System.Drawing.Point(505, 284);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(147, 34);
+            this.button4.TabIndex = 11;
+            this.button4.Text = "Show result";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.StopTrackBtn);
             this.Controls.Add(this.StartTrackBtn);
             this.Controls.Add(this.SelectAllBtn);
             this.Controls.Add(this.DeletePathBtn);
@@ -178,6 +203,8 @@
         private System.Windows.Forms.Button DeletePathBtn;
         private System.Windows.Forms.Button SelectAllBtn;
         private System.Windows.Forms.Button StartTrackBtn;
+        private System.Windows.Forms.Button StopTrackBtn;
+        private System.Windows.Forms.Button button4;
     }
 }
 
