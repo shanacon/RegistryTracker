@@ -1,6 +1,6 @@
 ﻿namespace RegistryTracker
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -39,7 +39,7 @@
             this.SelectAllBtn = new System.Windows.Forms.Button();
             this.StartTrackBtn = new System.Windows.Forms.Button();
             this.StopTrackBtn = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.ShowResultBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -157,22 +157,23 @@
             this.StopTrackBtn.UseVisualStyleBackColor = true;
             this.StopTrackBtn.Click += new System.EventHandler(this.StopTrackBtn_Click);
             // 
-            // button4
+            // ShowResultBtn
             // 
-            this.button4.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.button4.Location = new System.Drawing.Point(505, 284);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(147, 34);
-            this.button4.TabIndex = 11;
-            this.button4.Text = "Show result";
-            this.button4.UseVisualStyleBackColor = true;
+            this.ShowResultBtn.Font = new System.Drawing.Font("微軟正黑體", 15F);
+            this.ShowResultBtn.Location = new System.Drawing.Point(505, 284);
+            this.ShowResultBtn.Name = "ShowResultBtn";
+            this.ShowResultBtn.Size = new System.Drawing.Size(147, 34);
+            this.ShowResultBtn.TabIndex = 11;
+            this.ShowResultBtn.Text = "Show result";
+            this.ShowResultBtn.UseVisualStyleBackColor = true;
+            this.ShowResultBtn.Click += new System.EventHandler(this.button4_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button4);
+            this.Controls.Add(this.ShowResultBtn);
             this.Controls.Add(this.StopTrackBtn);
             this.Controls.Add(this.StartTrackBtn);
             this.Controls.Add(this.SelectAllBtn);
@@ -204,7 +205,7 @@
         private System.Windows.Forms.Button SelectAllBtn;
         private System.Windows.Forms.Button StartTrackBtn;
         private System.Windows.Forms.Button StopTrackBtn;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button ShowResultBtn;
     }
 }
 

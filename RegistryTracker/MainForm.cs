@@ -11,9 +11,9 @@ using Microsoft.Win32;
 
 namespace RegistryTracker
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             RootPathChoose.Items.Add("\\HKEY_CLASSES_ROOT");
@@ -140,6 +140,11 @@ namespace RegistryTracker
             }
             foreach (DiffStruct diff in Global.DiffList)
                 MessageBox.Show(diff.nodetree.getPath());
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
