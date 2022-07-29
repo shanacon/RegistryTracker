@@ -13,6 +13,7 @@ namespace RegistryTracker
 {
     public partial class MainForm : Form
     {
+        private ResultForm resultForm;
         public MainForm()
         {
             InitializeComponent();
@@ -138,13 +139,13 @@ namespace RegistryTracker
             {
                 Global.DiffList.AddRange(Global.CheckNodeDiff(Global.TrackList[i], Global.TrackListAfter[i]));
             }
-            foreach (DiffStruct diff in Global.DiffList)
-                MessageBox.Show(diff.nodetree.getPath());
         }
-
-        private void button4_Click(object sender, EventArgs e)
+        private void ShowResultBtn_Click(object sender, EventArgs e)
         {
-
+            resultForm = new ResultForm();
+            foreach (DiffStruct diff in Global.DiffList)
+                resultForm.AddResult(diff.nodetree.getPath(), diff.After);
+            resultForm.Show();
         }
     }
 }

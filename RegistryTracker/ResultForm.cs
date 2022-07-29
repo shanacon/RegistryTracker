@@ -15,6 +15,21 @@ namespace RegistryTracker
         public ResultForm()
         {
             InitializeComponent();
+            InitialResult();
+        }
+        private void InitialResult()
+        {
+            ResultListView.View = View.Details;
+            ResultListView.GridLines = true;
+            ResultListView.LabelEdit = false;
+            ResultListView.Columns.Add("Path", 500);
+            ResultListView.Columns.Add("added, deleted or modify", 500);
+        }
+        public void AddResult(string path, bool added)
+        {
+            var item = new ListViewItem(path);
+            item.SubItems.Add(added ? "added" : "delete");
+            ResultListView.Items.Add(item);
         }
     }
 }

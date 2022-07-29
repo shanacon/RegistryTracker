@@ -166,9 +166,9 @@
             this.ShowResultBtn.TabIndex = 11;
             this.ShowResultBtn.Text = "Show result";
             this.ShowResultBtn.UseVisualStyleBackColor = true;
-            this.ShowResultBtn.Click += new System.EventHandler(this.button4_Click);
+            this.ShowResultBtn.Click += new System.EventHandler(this.ShowResultBtn_Click);
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -185,7 +185,7 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.mylabel);
             this.Controls.Add(this.button1);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();
