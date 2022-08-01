@@ -39,6 +39,7 @@
             this.ResultListView.Size = new System.Drawing.Size(675, 426);
             this.ResultListView.TabIndex = 0;
             this.ResultListView.UseCompatibleStateImageBehavior = false;
+            this.ResultListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.ResultListView_ColumnClick);
             // 
             // ResultForm
             // 
