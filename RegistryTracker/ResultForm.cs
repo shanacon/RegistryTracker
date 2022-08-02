@@ -24,15 +24,26 @@ namespace RegistryTracker
             ResultListView.GridLines = true;
             ResultListView.LabelEdit = false;
             ResultListView.AllowColumnReorder = true;
-            ResultListView.Columns.Add("Path", 500);
-            ResultListView.Columns.Add("added, deleted or modify", 500);
+            ResultListView.Columns.Add("Path", 200);
+            ResultListView.Columns.Add("added, deleted or modify", 150);
+            ResultListView.Columns.Add("Value", 50);
+            ResultListView.Columns.Add("Start Value", 120);
+            ResultListView.Columns.Add("End Value", 120);
             ColumnSorter = new ListViewColumnSorter();
             ResultListView.ListViewItemSorter = ColumnSorter;
         }
-        public void AddResult(string path, bool added)
+        public void AddResult(string path, bool? added,string Value, string startvalue, string endvalue)
         {
             ListViewItem item = new ListViewItem(path);
-            item.SubItems.Add(added ? "added" : "delete");
+            if (added == null)
+                item.SubItems.Add("modify");
+            else if (added == true)
+                item.SubItems.Add("added");
+            else if(added == false)
+                item.SubItems.Add("delete");
+            item.SubItems.Add(Value);
+            item.SubItems.Add(startvalue);
+            item.SubItems.Add(endvalue);
             ResultListView.Items.Add(item);
         }
         private void ResultListView_ColumnClick(object sender, ColumnClickEventArgs e)

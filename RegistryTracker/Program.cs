@@ -26,7 +26,8 @@ namespace RegistryTracker
         public static NodeTree After;
         public static List<NodeTree> TrackList = new List<NodeTree> ();
         public static List<NodeTree> TrackListAfter = new List<NodeTree> ();
-        public static List<DiffStruct> DiffList = new List<DiffStruct> ();
+        public static List<NodeDiffStruct> NodeDiffList = new List<NodeDiffStruct> ();
+        public static List<ValueDiffStruct> ValueDiffList = new List<ValueDiffStruct>();
         public static bool CheckSame(NodeTree tree1, NodeTree tree2)
         {
             if (tree1.getChild().Count == 0 && tree2.getChild().Count == 0)
@@ -41,9 +42,9 @@ namespace RegistryTracker
                 return ret;
             }
         }
-        public static List<DiffStruct> CheckNodeDiff(NodeTree tree1, NodeTree tree2)
+        public static List<NodeDiffStruct> CheckNodeDiff(NodeTree tree1, NodeTree tree2)
         {
-            List<DiffStruct> ret = new List<DiffStruct>();
+            List<NodeDiffStruct> ret = new List<NodeDiffStruct>();
             Dictionary<string, NodeTree> DicTree1ToNode = new Dictionary<string, NodeTree>();
             Dictionary<string, NodeTree> DicTree2ToNode = new Dictionary<string, NodeTree>();
             ///
@@ -54,35 +55,72 @@ namespace RegistryTracker
             foreach (KeyValuePair<string, NodeTree> entry in DicTree1ToNode)
             {
                 if (!DicTree2ToNode.ContainsKey(entry.Key))
-                    ret.Add(new DiffStruct(DicTree1ToNode[entry.Key], false));
+                    ret.Add(new NodeDiffStruct(DicTree1ToNode[entry.Key], false));
                 else
                 {
-                    List<DiffStruct> tmp = CheckNodeDiff(entry.Value, DicTree2ToNode[entry.Key]);
+                    List<NodeDiffStruct> tmp = CheckNodeDiff(entry.Value, DicTree2ToNode[entry.Key]);
                     ret.AddRange(tmp);
                 }
             }
             foreach (KeyValuePair<string, NodeTree> entry in DicTree2ToNode)
             {
                 if (!DicTree1ToNode.ContainsKey(entry.Key))
-                    ret.Add(new DiffStruct(DicTree2ToNode[entry.Key], true));
+                    ret.Add(new NodeDiffStruct(DicTree2ToNode[entry.Key], true));
             }
+            CheckValueDiff(tree1, tree2);
             return ret;
         }
+        public static void CheckValueDiff(NodeTree tree1, NodeTree tree2)
+        {
+            Dictionary<string, string> DicTree1 = tree1.getValueList();
+            Dictionary<string, string> DicTree2 = tree2.getValueList();
+            foreach (KeyValuePair<string, string> entry in DicTree1)
+            {
+                if (!DicTree2.ContainsKey(entry.Key))
+                    ValueDiffList.Add(new ValueDiffStruct(tree1, entry.Key, false, DicTree1[entry.Key], ""));
+                else if (DicTree1[entry.Key] != DicTree2[entry.Key])
+                {
+                    ValueDiffList.Add(new ValueDiffStruct(tree1, entry.Key, null, DicTree1[entry.Key], DicTree2[entry.Key]));
+                }
+            }
+            foreach (KeyValuePair<string, string> entry in tree2.getValueList())
+            {
+                if (!DicTree1.ContainsKey(entry.Key))
+                    ValueDiffList.Add(new ValueDiffStruct(tree2, entry.Key, true, "", DicTree2[entry.Key]));
+            }
+        }
     }
-    public struct DiffStruct
+    public struct NodeDiffStruct
     {
         public NodeTree nodetree;
         public bool After;
-        public DiffStruct(NodeTree nodetree, bool After)
+        public NodeDiffStruct(NodeTree nodetree, bool After)
         {
             this.nodetree = nodetree;
             this.After = After;
+        }
+    }
+    public struct ValueDiffStruct
+    {
+        public NodeTree nodetree;
+        public string ValueName;
+        public bool? After;
+        public string StartValue;
+        public string EndValue;
+        public ValueDiffStruct(NodeTree nodetree, string ValueName, bool? After, string StartValue, string EndValue)
+        {
+            this.nodetree = nodetree;
+            this.ValueName = ValueName;
+            this.After = After;
+            this.StartValue = StartValue;
+            this.EndValue = EndValue;
         }
     }
     public class NodeTree
     {
         private string name;
         private string path;
+        private Dictionary<string, string> ValueList;
         private enum ROOT { HKEY_CLASSES_ROOT, HKEY_CURRENT_USER , HKEY_LOCAL_MACHINE , HKEY_USERS , HKEY_CURRENT_CONFIG }
         private ROOT root;
         private LinkedList<NodeTree> child;
@@ -91,6 +129,7 @@ namespace RegistryTracker
             this.name = name;
             this.path = path;
             this.root = (ROOT)root;
+            ValueList = new Dictionary<string, string>();
             child = new LinkedList<NodeTree>();
         }
         public string getName()
@@ -109,6 +148,10 @@ namespace RegistryTracker
         {
             return child;
         }
+        public Dictionary<string, string> getValueList()
+        {
+            return ValueList;
+        }
         public void setName(string name)
         {
             this.name = name;
@@ -124,7 +167,6 @@ namespace RegistryTracker
         public void Construct()
         {
             RegistryKey rk = null;
-            //MessageBox.Show(root.ToString());
             if (root == ROOT.HKEY_CLASSES_ROOT)
                 rk = path == "" ? Registry.ClassesRoot : Registry.ClassesRoot.OpenSubKey(path);
             else if (root == ROOT.HKEY_CURRENT_USER)
@@ -144,6 +186,14 @@ namespace RegistryTracker
             foreach (string s in names)
             {
                 child.AddLast(new NodeTree(s, path == "" ? s : path + "\\" + s, (int)root));
+            }
+            string[] ValueNames = rk.GetValueNames();
+            foreach (string s in ValueNames)
+            {
+                if (rk.GetValue(s).GetType() == typeof(byte[]))
+                    ValueList[s] = BitConverter.ToString((byte[])rk.GetValue(s));
+                else
+                    ValueList[s] = rk.GetValue(s).ToString();
             }
             foreach (NodeTree kid in child)
             {

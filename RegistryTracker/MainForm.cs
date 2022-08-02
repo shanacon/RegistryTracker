@@ -137,14 +137,16 @@ namespace RegistryTracker
             mylabel.Text = "Making result";
             for(int i = 0; i < Global.TrackList.Count; i++)
             {
-                Global.DiffList.AddRange(Global.CheckNodeDiff(Global.TrackList[i], Global.TrackListAfter[i]));
+                Global.NodeDiffList.AddRange(Global.CheckNodeDiff(Global.TrackList[i], Global.TrackListAfter[i]));
             }
         }
         private void ShowResultBtn_Click(object sender, EventArgs e)
         {
             resultForm = new ResultForm();
-            foreach (DiffStruct diff in Global.DiffList)
-                resultForm.AddResult(diff.nodetree.getPath(), diff.After);
+            foreach (NodeDiffStruct diff in Global.NodeDiffList)
+                resultForm.AddResult(diff.nodetree.getPath(), diff.After, "", "", "");
+            foreach (ValueDiffStruct diff in Global.ValueDiffList)
+                resultForm.AddResult(diff.nodetree.getPath(), diff.After, diff.ValueName, diff.StartValue, diff.EndValue);
             resultForm.Show();
         }
     }
