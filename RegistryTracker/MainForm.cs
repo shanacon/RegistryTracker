@@ -14,14 +14,17 @@ namespace RegistryTracker
     public partial class MainForm : Form
     {
         private ResultForm resultForm;
+        private Dictionary<string, int> PathMatch = new Dictionary<string, int> 
+        { 
+            { "HKEY_CLASSES_ROOT", 0},
+            { "HKEY_CURRENT_USER", 1},
+            { "HKEY_LOCAL_MACHINE", 2},
+            { "HKEY_USERS", 3},
+            { "HKEY_CURRENT_CONFIG", 4},
+        };
         public MainForm()
         {
             InitializeComponent();
-            RootPathChoose.Items.Add("\\HKEY_CLASSES_ROOT");
-            RootPathChoose.Items.Add("\\HKEY_CURRENT_USER");
-            RootPathChoose.Items.Add("\\HKEY_LOCAL_MACHINE");
-            RootPathChoose.Items.Add("\\HKEY_USERS");
-            RootPathChoose.Items.Add("\\HKEY_CURRENT_CONFIG");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -55,22 +58,45 @@ namespace RegistryTracker
         private void AddPathBtn_Click(object sender, EventArgs e)
         {
             RegistryKey rk = null;
-            if (RootPathChoose.SelectedIndex == -1)
+            string[] PathSplit = PathBox.Text.Split('\\');
+            int root = -1;
+            int rootindex = -1;
+            if (PathMatch.ContainsKey(PathSplit[0]))
             {
-                MessageBox.Show("Please select root path.");
+                rootindex = 0;
+                root = PathMatch[PathSplit[0]];
+            }
+            else if(PathSplit.Length == 1)
+            {
+                MessageBox.Show("Please enter correct path include root path.");
+                MessageBox.Show("Root path include\nHKEY_CLASSES_ROOT\nHKEY_CURRENT_USER\nHKEY_LOCAL_MACHINE\nHKEY_USERS\nHKEY_CURRENT_CONFIG");
                 return;
             }
-            string tmp = (PathBox.Text.Length != 0 && PathBox.Text[0] == '\\' ? PathBox.Text.Remove(0,1) : PathBox.Text);
-
-            if (RootPathChoose.SelectedIndex == 0)
+            else if (PathMatch.ContainsKey(PathSplit[1]))
+            {
+                rootindex = 1;
+                root = PathMatch[PathSplit[1]];
+            }
+            else
+            {
+                MessageBox.Show("Please enter correct path include root path.");
+                MessageBox.Show("Root path include\nHKEY_CLASSES_ROOT\nHKEY_CURRENT_USER\nHKEY_LOCAL_MACHINE\nHKEY_USERS\nHKEY_CURRENT_CONFIG");
+                return;
+            }
+            string tmp = "";
+            if(PathSplit.Length != rootindex + 1)
+                tmp = PathSplit[rootindex + 1];
+            for (int i = rootindex == 0 ? 2 : 3; i < PathSplit.Length; i++)
+                tmp += "\\" + PathSplit[i];
+            if (root == 0)
                 rk = Registry.ClassesRoot.OpenSubKey(tmp);
-            else if (RootPathChoose.SelectedIndex == 1)
+            else if (root == 1)
                 rk = Registry.CurrentUser.OpenSubKey(tmp);
-            else if (RootPathChoose.SelectedIndex == 2)
+            else if (root == 2)
                 rk = Registry.LocalMachine.OpenSubKey(tmp);
-            else if (RootPathChoose.SelectedIndex == 3)
+            else if (root == 3)
                 rk = Registry.Users.OpenSubKey(tmp);
-            else if (RootPathChoose.SelectedIndex == 4)
+            else if (root == 4)
                 rk = Registry.CurrentConfig.OpenSubKey(tmp);
 
             if(rk == null)
@@ -78,8 +104,8 @@ namespace RegistryTracker
                 MessageBox.Show("Path does not exist.");
                 return;
             }
-            Global.TrackList.Add(new NodeTree(tmp.Split('\\').Last(), tmp, RootPathChoose.SelectedIndex));
-            TrackedPathBox.Items.Add(RootPathChoose.Text + "\\" + tmp);
+            Global.TrackList.Add(new NodeTree(tmp.Split('\\').Last(), tmp, root));
+            TrackedPathBox.Items.Add(PathSplit[rootindex] + "\\" + tmp);
         }
         private void DeletePathBtn_Click(object sender, EventArgs e)
         {

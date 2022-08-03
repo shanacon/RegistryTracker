@@ -31,7 +31,6 @@
             this.button1 = new System.Windows.Forms.Button();
             this.mylabel = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.RootPathChoose = new System.Windows.Forms.ComboBox();
             this.AddPathBtn = new System.Windows.Forms.Button();
             this.TrackedPathBox = new System.Windows.Forms.CheckedListBox();
             this.PathBox = new System.Windows.Forms.TextBox();
@@ -73,15 +72,6 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // RootPathChoose
-            // 
-            this.RootPathChoose.Font = new System.Drawing.Font("微軟正黑體", 10F);
-            this.RootPathChoose.FormattingEnabled = true;
-            this.RootPathChoose.Location = new System.Drawing.Point(34, 76);
-            this.RootPathChoose.Name = "RootPathChoose";
-            this.RootPathChoose.Size = new System.Drawing.Size(200, 25);
-            this.RootPathChoose.TabIndex = 3;
-            // 
             // AddPathBtn
             // 
             this.AddPathBtn.Font = new System.Drawing.Font("微軟正黑體", 15F);
@@ -107,9 +97,9 @@
             // PathBox
             // 
             this.PathBox.Font = new System.Drawing.Font("微軟正黑體", 10F);
-            this.PathBox.Location = new System.Drawing.Point(242, 76);
+            this.PathBox.Location = new System.Drawing.Point(34, 76);
             this.PathBox.Name = "PathBox";
-            this.PathBox.Size = new System.Drawing.Size(338, 25);
+            this.PathBox.Size = new System.Drawing.Size(546, 25);
             this.PathBox.TabIndex = 6;
             this.PathBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PathBox_KeyDown);
             // 
@@ -181,7 +171,6 @@
             this.Controls.Add(this.PathBox);
             this.Controls.Add(this.TrackedPathBox);
             this.Controls.Add(this.AddPathBtn);
-            this.Controls.Add(this.RootPathChoose);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.mylabel);
             this.Controls.Add(this.button1);
@@ -197,7 +186,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label mylabel;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox RootPathChoose;
         private System.Windows.Forms.Button AddPathBtn;
         private System.Windows.Forms.CheckedListBox TrackedPathBox;
         private System.Windows.Forms.TextBox PathBox;
