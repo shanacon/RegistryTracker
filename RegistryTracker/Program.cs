@@ -22,12 +22,17 @@ namespace RegistryTracker
     }
     public static class Global
     {
-        public static NodeTree Before;
-        public static NodeTree After;
         public static List<NodeTree> TrackList = new List<NodeTree> ();
         public static List<NodeTree> TrackListAfter = new List<NodeTree> ();
         public static List<NodeDiffStruct> NodeDiffList = new List<NodeDiffStruct> ();
         public static List<ValueDiffStruct> ValueDiffList = new List<ValueDiffStruct>();
+        public static void Initialize()
+        {
+            TrackList = new List<NodeTree> ();
+            TrackListAfter = new List<NodeTree> ();
+            NodeDiffList = new List<NodeDiffStruct> (); 
+            ValueDiffList = new List<ValueDiffStruct> ();
+        }
         public static bool CheckSame(NodeTree tree1, NodeTree tree2)
         {
             if (tree1.getChild().Count == 0 && tree2.getChild().Count == 0)

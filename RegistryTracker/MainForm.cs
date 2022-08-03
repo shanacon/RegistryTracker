@@ -106,6 +106,7 @@ namespace RegistryTracker
             }
             Global.TrackList.Add(new NodeTree(tmp.Split('\\').Last(), tmp, root));
             TrackedPathBox.Items.Add(PathSplit[rootindex] + "\\" + tmp);
+            PathBox.Text = "";
         }
         private void DeletePathBtn_Click(object sender, EventArgs e)
         {
@@ -165,6 +166,12 @@ namespace RegistryTracker
             {
                 Global.NodeDiffList.AddRange(Global.CheckNodeDiff(Global.TrackList[i], Global.TrackListAfter[i]));
             }
+            resultForm = new ResultForm();
+            foreach (NodeDiffStruct diff in Global.NodeDiffList)
+                resultForm.AddResult(diff.nodetree.getPath(), diff.After, "", "", "");
+            foreach (ValueDiffStruct diff in Global.ValueDiffList)
+                resultForm.AddResult(diff.nodetree.getPath(), diff.After, diff.ValueName, diff.StartValue, diff.EndValue);
+            resultForm.Show();
         }
         private void ShowResultBtn_Click(object sender, EventArgs e)
         {
