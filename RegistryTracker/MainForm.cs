@@ -98,13 +98,11 @@ namespace RegistryTracker
                 rk = Registry.Users.OpenSubKey(tmp);
             else if (root == 4)
                 rk = Registry.CurrentConfig.OpenSubKey(tmp);
-
             if(rk == null)
             {
                 MessageBox.Show("Path does not exist.");
                 return;
             }
-            Global.TrackList.Add(new NodeTree(tmp.Split('\\').Last(), tmp, root));
             TrackedPathBox.Items.Add(PathSplit[rootindex] + "\\" + tmp);
             PathBox.Text = "";
         }
@@ -120,7 +118,6 @@ namespace RegistryTracker
                     if (TrackedPathBox.GetItemChecked(i))
                     {
                         continueflag = true;
-                        Global.TrackList.RemoveAt(i);
                         TrackedPathBox.Items.RemoveAt(i);
                         break;
                     }
@@ -149,6 +146,12 @@ namespace RegistryTracker
         }
         private void StartTrackBtn_Click(object sender, EventArgs e)
         {
+            Global.Initialize();
+            foreach (var item in TrackedPathBox.Items)
+            {
+                string[] tmp = TrackedPathBox.GetItemText(item).Split('\\');
+                Global.TrackList.Add(new NodeTree(tmp.Last(), string.Join("\\", tmp.Skip(1)), PathMatch[tmp[0]]));
+            }
             foreach (NodeTree node in Global.TrackList)
                 node.Construct();
             mylabel.Text = "Tracking";
@@ -172,6 +175,7 @@ namespace RegistryTracker
             foreach (ValueDiffStruct diff in Global.ValueDiffList)
                 resultForm.AddResult(diff.nodetree.getPath(), diff.After, diff.ValueName, diff.StartValue, diff.EndValue);
             resultForm.Show();
+            mylabel.Text = "Result has been show";
         }
         private void ShowResultBtn_Click(object sender, EventArgs e)
         {
