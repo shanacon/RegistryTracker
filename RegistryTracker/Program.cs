@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Security;
 
 namespace RegistryTracker
 {
@@ -26,12 +27,14 @@ namespace RegistryTracker
         public static List<NodeTree> TrackListAfter = new List<NodeTree> ();
         public static List<NodeDiffStruct> NodeDiffList = new List<NodeDiffStruct> ();
         public static List<ValueDiffStruct> ValueDiffList = new List<ValueDiffStruct>();
+        public static List<NoAccesStruct> NoAccesList = new List<NoAccesStruct> ();
         public static void Initialize()
         {
             TrackList = new List<NodeTree> ();
             TrackListAfter = new List<NodeTree> ();
             NodeDiffList = new List<NodeDiffStruct> (); 
             ValueDiffList = new List<ValueDiffStruct> ();
+            NoAccesList = new List<NoAccesStruct> ();
         }
         public static bool CheckSame(NodeTree tree1, NodeTree tree2)
         {
@@ -121,6 +124,16 @@ namespace RegistryTracker
             this.EndValue = EndValue;
         }
     }
+    public struct NoAccesStruct
+    {
+        public string path;
+        public string root;
+        public NoAccesStruct(string path, string root)
+        {
+            this.path = path;
+            this.root = root;
+        }
+    }
     public class NodeTree
     {
         private string name;
@@ -172,30 +185,48 @@ namespace RegistryTracker
         public void Construct()
         {
             RegistryKey rk = null;
-            if (root == ROOT.HKEY_CLASSES_ROOT)
-                rk = path == "" ? Registry.ClassesRoot : Registry.ClassesRoot.OpenSubKey(path);
-            else if (root == ROOT.HKEY_CURRENT_USER)
-                rk = path == "" ? Registry.CurrentUser : Registry.CurrentUser.OpenSubKey(path);
-            else if (root == ROOT.HKEY_LOCAL_MACHINE)
-                rk = path == "" ? Registry.LocalMachine : Registry.LocalMachine.OpenSubKey(path);
-            else if (root == ROOT.HKEY_USERS)
-                rk = path == "" ? Registry.Users : Registry.Users.OpenSubKey(path);
-            else if (root == ROOT.HKEY_CURRENT_CONFIG)
-                rk = path == "" ? Registry.CurrentConfig : Registry.CurrentConfig.OpenSubKey(path);
+            try
+            {
+                if (root == ROOT.HKEY_CLASSES_ROOT)
+                    rk = path == "" ? RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Registry64) : RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Registry64).OpenSubKey(path);
+                else if (root == ROOT.HKEY_CURRENT_USER)
+                    rk = path == "" ? Registry.CurrentUser : Registry.CurrentUser.OpenSubKey(path);
+                else if (root == ROOT.HKEY_LOCAL_MACHINE)
+                    rk = path == "" ? Registry.LocalMachine : Registry.LocalMachine.OpenSubKey(path);
+                else if (root == ROOT.HKEY_USERS)
+                    rk = path == "" ? Registry.Users : Registry.Users.OpenSubKey(path);
+                else if (root == ROOT.HKEY_CURRENT_CONFIG)
+                    rk = path == "" ? Registry.CurrentConfig : Registry.CurrentConfig.OpenSubKey(path);
+            }
+            catch (SecurityException s)
+            {
+                Global.NoAccesList.Add(new NoAccesStruct(path, root.ToString()));
+                return ;
+            }
             if (rk == null)
             {
-                MessageBox.Show("Error in Construct.");
-                Environment.Exit(0);
+                Global.NoAccesList.Add(new NoAccesStruct(path, root.ToString()));
+                return ;
             }
-            string[] names = rk.GetSubKeyNames();
-            foreach (string s in names)
+            try
             {
-                child.AddLast(new NodeTree(s, path == "" ? s : path + "\\" + s, (int)root));
+                string[] names = rk.GetSubKeyNames();
+                foreach (string s in names)
+                {
+                    child.AddLast(new NodeTree(s, path == "" ? s : path + "\\" + s, (int)root));
+                }
             }
+            catch
+            {
+                MessageBox.Show(path);
+            }
+            
             string[] ValueNames = rk.GetValueNames();
             foreach (string s in ValueNames)
             {
-                if (rk.GetValue(s).GetType() == typeof(byte[]))
+                if(rk.GetValue(s) == null)
+                    ValueList[s] = "";
+                else if (rk.GetValue(s).GetType() == typeof(byte[]))
                     ValueList[s] = BitConverter.ToString((byte[])rk.GetValue(s));
                 else
                     ValueList[s] = rk.GetValue(s).ToString();

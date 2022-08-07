@@ -13,10 +13,13 @@ namespace RegistryTracker
 {
     public partial class ResultForm : Form
     {
-        public ResultForm()
+        public ResultForm(bool NoAccessForm = false)
         {
             InitializeComponent();
-            InitialResult();
+            if (!NoAccessForm)
+                InitialResult();
+            else
+                InitialNoAccess();
         }
         private void InitialResult()
         {
@@ -32,6 +35,17 @@ namespace RegistryTracker
             ColumnSorter = new ListViewColumnSorter();
             ResultListView.ListViewItemSorter = ColumnSorter;
         }
+        private void InitialNoAccess()
+        {
+            ResultListView.View = View.Details;
+            ResultListView.GridLines = true;
+            ResultListView.LabelEdit = false;
+            ResultListView.AllowColumnReorder = true;
+            ResultListView.Columns.Add("Path", 300);
+            ResultListView.Columns.Add("root", 300);
+            ColumnSorter = new ListViewColumnSorter();
+            ResultListView.ListViewItemSorter = ColumnSorter;
+        }
         public void AddResult(string path, bool? added,string Value, string startvalue, string endvalue)
         {
             ListViewItem item = new ListViewItem(path);
@@ -44,6 +58,12 @@ namespace RegistryTracker
             item.SubItems.Add(Value);
             item.SubItems.Add(startvalue);
             item.SubItems.Add(endvalue);
+            ResultListView.Items.Add(item);
+        }
+        public void AddNoAccess(string path, string root)
+        {
+            ListViewItem item = new ListViewItem(path);
+            item.SubItems.Add(root);
             ResultListView.Items.Add(item);
         }
         private void ResultListView_ColumnClick(object sender, ColumnClickEventArgs e)

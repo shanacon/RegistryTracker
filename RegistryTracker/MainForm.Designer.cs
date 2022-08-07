@@ -37,6 +37,8 @@
             this.StartResetTrackBtn = new System.Windows.Forms.Button();
             this.StopTrackBtn = new System.Windows.Forms.Button();
             this.ShowResultBtn = new System.Windows.Forms.Button();
+            this.ShowNoAccessBtn = new System.Windows.Forms.Button();
+            this.NoAccessLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // mylabel
@@ -134,11 +136,33 @@
             this.ShowResultBtn.UseVisualStyleBackColor = true;
             this.ShowResultBtn.Click += new System.EventHandler(this.ShowResultBtn_Click);
             // 
+            // ShowNoAccessBtn
+            // 
+            this.ShowNoAccessBtn.Font = new System.Drawing.Font("微軟正黑體", 15F);
+            this.ShowNoAccessBtn.Location = new System.Drawing.Point(152, 354);
+            this.ShowNoAccessBtn.Name = "ShowNoAccessBtn";
+            this.ShowNoAccessBtn.Size = new System.Drawing.Size(237, 68);
+            this.ShowNoAccessBtn.TabIndex = 12;
+            this.ShowNoAccessBtn.Text = "Show list of path which don\'t have access";
+            this.ShowNoAccessBtn.UseVisualStyleBackColor = true;
+            this.ShowNoAccessBtn.Click += new System.EventHandler(this.ShowNoAccessBtn_Click);
+            // 
+            // NoAccessLabel
+            // 
+            this.NoAccessLabel.AutoSize = true;
+            this.NoAccessLabel.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.NoAccessLabel.Location = new System.Drawing.Point(410, 379);
+            this.NoAccessLabel.Name = "NoAccessLabel";
+            this.NoAccessLabel.Size = new System.Drawing.Size(0, 20);
+            this.NoAccessLabel.TabIndex = 13;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.NoAccessLabel);
+            this.Controls.Add(this.ShowNoAccessBtn);
             this.Controls.Add(this.ShowResultBtn);
             this.Controls.Add(this.StopTrackBtn);
             this.Controls.Add(this.StartResetTrackBtn);
@@ -165,6 +189,8 @@
         private System.Windows.Forms.Button StartResetTrackBtn;
         private System.Windows.Forms.Button StopTrackBtn;
         private System.Windows.Forms.Button ShowResultBtn;
+        private System.Windows.Forms.Button ShowNoAccessBtn;
+        private System.Windows.Forms.Label NoAccessLabel;
     }
 }
 

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Security;
 
 namespace RegistryTracker
 {
@@ -25,6 +26,7 @@ namespace RegistryTracker
         public MainForm()
         {
             InitializeComponent();
+            NoAccessLabel.Text = "No Access Path will count after start track.";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -68,8 +70,9 @@ namespace RegistryTracker
             }
             else if(PathSplit.Length == 1)
             {
-                MessageBox.Show("Please enter correct path include root path.");
-                MessageBox.Show("Root path include\nHKEY_CLASSES_ROOT\nHKEY_CURRENT_USER\nHKEY_LOCAL_MACHINE\nHKEY_USERS\nHKEY_CURRENT_CONFIG");
+                MessageBox.Show("Please enter correct path include root path.\nRoot path include\n" +
+                    "HKEY_CLASSES_ROOT\nHKEY_CURRENT_USER\nHKEY_LOCAL_MACHINE\nHKEY_USERS\nHKEY_CURRENT_CONFIG");
+                PathBox.Text = "";
                 return;
             }
             else if (PathMatch.ContainsKey(PathSplit[1]))
@@ -79,8 +82,9 @@ namespace RegistryTracker
             }
             else
             {
-                MessageBox.Show("Please enter correct path include root path.");
-                MessageBox.Show("Root path include\nHKEY_CLASSES_ROOT\nHKEY_CURRENT_USER\nHKEY_LOCAL_MACHINE\nHKEY_USERS\nHKEY_CURRENT_CONFIG");
+                MessageBox.Show("Please enter correct path include root path.\nRoot path include\n" +
+                    "HKEY_CLASSES_ROOT\nHKEY_CURRENT_USER\nHKEY_LOCAL_MACHINE\nHKEY_USERS\nHKEY_CURRENT_CONFIG");
+                PathBox.Text = "";
                 return;
             }
             string tmp = "";
@@ -88,19 +92,29 @@ namespace RegistryTracker
                 tmp = PathSplit[rootindex + 1];
             for (int i = rootindex == 0 ? 2 : 3; i < PathSplit.Length; i++)
                 tmp += "\\" + PathSplit[i];
-            if (root == 0)
-                rk = Registry.ClassesRoot.OpenSubKey(tmp);
-            else if (root == 1)
-                rk = Registry.CurrentUser.OpenSubKey(tmp);
-            else if (root == 2)
-                rk = Registry.LocalMachine.OpenSubKey(tmp);
-            else if (root == 3)
-                rk = Registry.Users.OpenSubKey(tmp);
-            else if (root == 4)
-                rk = Registry.CurrentConfig.OpenSubKey(tmp);
+            try
+            {
+                if (root == 0)
+                    rk = Registry.ClassesRoot.OpenSubKey(tmp);
+                else if (root == 1)
+                    rk = Registry.CurrentUser.OpenSubKey(tmp);
+                else if (root == 2)
+                    rk = Registry.LocalMachine.OpenSubKey(tmp);
+                else if (root == 3)
+                    rk = Registry.Users.OpenSubKey(tmp);
+                else if (root == 4)
+                    rk = Registry.CurrentConfig.OpenSubKey(tmp);
+            }
+            catch(SecurityException se)
+            {
+                MessageBox.Show(se.Message + "\nDon't have access of this registry.");
+                PathBox.Text = "";
+                return ;
+            }
             if(rk == null)
             {
                 MessageBox.Show("Path does not exist.");
+                PathBox.Text = "";
                 return;
             }
             TrackedPathBox.Items.Add(PathSplit[rootindex] + "\\" + tmp);
@@ -126,7 +140,6 @@ namespace RegistryTracker
                 }
                 count++;
             }
-            
         }
 
         private void SelectAllBtn_Click(object sender, EventArgs e)
@@ -146,6 +159,7 @@ namespace RegistryTracker
         }
         private void StartTrackBtn_Click(object sender, EventArgs e)
         {
+            mylabel.Text = "Constructing";
             Global.Initialize();
             foreach (var item in TrackedPathBox.Items)
             {
@@ -155,6 +169,7 @@ namespace RegistryTracker
             foreach (NodeTree node in Global.TrackList)
                 node.Construct();
             mylabel.Text = "Tracking";
+            NoAccessLabel.Text = $"{Global.NoAccesList.Count.ToString()} path don't have access.";
         }
 
         private void StopTrackBtn_Click(object sender, EventArgs e)
@@ -184,6 +199,14 @@ namespace RegistryTracker
                 resultForm.AddResult(diff.nodetree.getPath(), diff.After, "", "", "");
             foreach (ValueDiffStruct diff in Global.ValueDiffList)
                 resultForm.AddResult(diff.nodetree.getPath(), diff.After, diff.ValueName, diff.StartValue, diff.EndValue);
+            resultForm.Show();
+        }
+
+        private void ShowNoAccessBtn_Click(object sender, EventArgs e)
+        {
+            resultForm = new ResultForm(true);
+            foreach (NoAccesStruct item in Global.NoAccesList)
+                resultForm.AddNoAccess(item.path, item.root);
             resultForm.Show();
         }
     }
