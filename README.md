@@ -1,6 +1,6 @@
 # Registry Tracker
 ## Introduction
-This is a tool to track the Registry in windows with specify path.
+This is a tool to track the Registry in Windows with specific paths.
 ## Usage
 ![image](https://github.com/user-attachments/assets/691ffcd7-9bb0-4a43-8683-f5c76da6aebc)\
 Enter the path you want to track and click **Add path to track**.\
